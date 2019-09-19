@@ -1,0 +1,104 @@
+package models
+
+import (
+	"fmt"
+
+	"github.com/astaxie/beego/logs"
+	"github.com/astaxie/beego/orm"
+)
+
+// // AddActivityTicketModels Relation between Activity and TicketModels
+// func AddActivityTicketModels(activityId string, ticketModelList []int) map[string]string {
+// 	result := make(map[string]string)
+// 	id, _ := strconv.Atoi(activityId)
+// 	o := orm.NewOrm()
+// 	if o.QueryTable("activity").Filter("id", id).Exist() {
+// 		activity := Activity{Id: id}
+// 		m2m := o.QueryM2M(&activity, "TicketsIncluded")
+// 		var tickets []*TicketModel
+// 		qs := o.QueryTable("ticket_model")
+// 		for num, item := range ticketModelList {
+// 			temp := new(TicketModel)
+// 			err := qs.Filter("id", item).One(temp)
+// 			if err != nil {
+// 				result[fmt.Sprintf("Read Error on item %d", num+1)] = err.Error()
+// 			} else {
+// 				tickets = append(tickets, temp)
+// 			}
+// 		}
+// 		nums, removeErr := m2m.Clear()
+// 		if removeErr == nil {
+// 			result["removed"] = strconv.FormatInt(nums, 10)
+// 		} else {
+// 			result["error"] = "removeErr:" + removeErr.Error()
+// 		}
+// 		num, addErr := m2m.Add(tickets)
+// 		if addErr == nil {
+// 			result["inserted"] = strconv.FormatInt(num, 10)
+// 		} else {
+// 			result["error"] = "insertErr:" + addErr.Error()
+// 		}
+
+// 	} else {
+// 		result["error"] = "activityId not existed"
+// 	}
+// 	return result
+// }
+
+// // GetActivityTicketModels return all TicketModels
+// func GetActivityTicketModels(activityId string) map[string]interface{} {
+// 	result := make(map[string]interface{})
+// 	id, _ := strconv.Atoi(activityId)
+// 	var ticketModel []*TicketModel
+// 	o := orm.NewOrm()
+// 	if o.QueryTable("activity").Filter("id", id).Exist() {
+// 		num, err := o.QueryTable("ticket_model").Filter("Activity__Activity__Id", id).All(&ticketModel)
+// 		result["count"] = strconv.FormatInt(num, 10)
+// 		result["error"] = err
+// 		result["ticketModels"] = ticketModel
+// 	} else {
+// 		result["error"] = "activityId not existed"
+// 	}
+// 	return result
+// }
+
+// TODO: AddTicketOwner needs rewrite
+func AddTicketOwner(openId string, ticklist []int) map[string]interface{} {
+	result := make(map[string]interface{})
+	o := orm.NewOrm()
+	if o.QueryTable("activity_user").Filter("open_id", openId).Exist() {
+		transactionErr := o.Begin()
+		ticket := Ticket{}
+		failedCount := 0
+		succeedCount := 0
+		queryErr := ""
+		for _, i := range ticklist {
+			err := o.QueryTable("ticket").Filter("ticket_model_id", i).Filter("state", "Illegal").One(&ticket)
+			if err != nil {
+				logs.Debug("No ticket avaliable: ticketModel - ", i)
+				queryErr += fmt.Sprintf("No ticket avaliable: ticketModel - %d;", i)
+				failedCount++
+			} else {
+				activityUser := User{OpenId: openId}
+				o.Read(&activityUser, "open_id")
+				ticket.State = "Legal"
+				ticket.Owner = &activityUser
+				o.Update(&ticket, "owner", "updated", "state")
+				succeedCount++
+			}
+		}
+		if failedCount != 0 {
+			transactionErr = o.Rollback()
+			result["error"] = queryErr
+			result["state"] = "failed"
+		} else {
+			transactionErr = o.Commit()
+			result["error"] = nil
+			result["state"] = "succeed"
+		}
+		if transactionErr != nil {
+			logs.Debug(transactionErr)
+		}
+	}
+	return result
+}

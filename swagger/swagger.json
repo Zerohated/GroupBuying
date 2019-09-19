@@ -1,0 +1,958 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "GroupBuying Test API",
+        "description": "beego has a very cool tools to autogenerate documents for your API",
+        "version": "2.0.0",
+        "contact": {
+            "email": "david.chou93@gmail.com"
+        }
+    },
+    "basePath": "/v2",
+    "paths": {
+        "/activities/": {
+            "get": {
+                "tags": [
+                    "activities"
+                ],
+                "description": "get all Activities *Param \"state\" : \"未发布/未开始/进行中/已结束-团满/已结束-过期\"",
+                "operationId": "ActivitiesController.GetAll",
+                "responses": {
+                    "200": {
+                        "description": "{\u003cbr\u003e\"activities\": [Activity1,Activity2,...],\u003cbr\u003e\"count\":2,\u003cbr\u003e\"error\":null\u003cbr\u003e}"
+                    },
+                    "400": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/activities/dashboard/": {
+            "get": {
+                "tags": [
+                    "activities"
+                ],
+                "description": "get all Activities Dashboard. limitCount=拼团上限，successGroupCount=成功团数, userCount=参与人数, successUserCount=成功人数, ticketCount=发放卡券, ticketUsedCount=已核销卡券",
+                "operationId": "ActivitiesController.Dashboard",
+                "responses": {
+                    "200": {
+                        "description": "{\u003cbr\u003e\"activities\": [Activity1,Activity2,...],\u003cbr\u003e\"count\":2\u003cbr\u003e}"
+                    },
+                    "400": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/activities/refund/{activityId}": {
+            "get": {
+                "tags": [
+                    "activities"
+                ],
+                "description": "get all refund record",
+                "operationId": "ActivitiesController.Refund",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId you want to get",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\u003cbr\u003e\"record\": [record1,record2,...],\u003cbr\u003e\"count\":2\u003cbr\u003e}"
+                    },
+                    "400": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/activities/test/": {
+            "post": {
+                "tags": [
+                    "activities"
+                ],
+                "description": "None",
+                "operationId": "ActivitiesController.Test",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "\u003cp\u003e{}\u003c/p\u003e",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/.object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{}"
+                    },
+                    "400": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/activity/": {
+            "post": {
+                "tags": [
+                    "activity"
+                ],
+                "description": "Use Json to input name(str),price(float),groupSize(int),limitCount(int),startDate(str),endDate(str)",
+                "operationId": "ActivityController.Create Activity",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "\u003cp\u003e{\u003cbr\u003e\u0026quot;name\u0026quot;: \u0026quot;name\u0026quot;,\u003cbr\u003e\u0026quot;price\u0026quot;: 0.0,\u003cbr\u003e\u0026quot;groupSize\u0026quot;: 0,\u003cbr\u003e\u0026quot;limitCount\u0026quot;: 0,\u003cbr\u003e\u0026quot;startDate\u0026quot;: \u0026quot;2017-01-01\u0026quot;,\u003cbr\u003e\u0026quot;endDate\u0026quot;: \u0026quot;2017-12-31\u0026quot;\u003cbr\u003e}\u003c/p\u003e",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/.object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"activityId\":Activity.Id}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/activity/detail/{activityId}": {
+            "get": {
+                "tags": [
+                    "activity"
+                ],
+                "description": "Detail information about groups,ticketModels,tickets",
+                "operationId": "ActivityController.Get Activity Detail",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId you want to get",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{Activity} groups,ticketModels,tickets,name,price,groupSize"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/activity/models/{activityId}/{ticketModelId}/": {
+            "post": {
+                "tags": [
+                    "activity"
+                ],
+                "description": "Add Activity's TicketModels",
+                "operationId": "ActivityController.Add or Update Activity's TicketModels",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId you want to modify",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "ticketModelId",
+                        "description": "the ticketModelId you want to modify",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "{\u0026quot;is_amust\u0026quot;: true, \u0026quot;useDetail\u0026quot;: \u0026quot;blablabla\u0026quot;,\u0026quot;startDate\u0026quot;: \u0026quot;2017-11-11\u0026quot;,\u0026quot;endDate\u0026quot;:\u0026quot;2017-11-11\u0026quot;}",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/.object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"state\": \"succeed\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "activity"
+                ],
+                "description": "Delete Activity's TicketModels",
+                "operationId": "ActivityController.Delete Activity's TicketModels",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId you want to modify",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "ticketModelId",
+                        "description": "the ticketModelId you want to modify",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"state\": \"succeed\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/activity/ui/{activityId}": {
+            "put": {
+                "tags": [
+                    "activity"
+                ],
+                "description": "Use Json to input background,button,detailButton,successButton,description,detail,keyVisual,endNotice,notSuccess,successTop",
+                "operationId": "ActivityController.Update ActivityUi",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId you want to get",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "\u003cp\u003e{\u003cbr\u003e\u0026quot;key\u0026quot;: \u0026quot;value\u0026quot;,\u003cbr\u003e...\u003cbr\u003e\u003cbr\u003e\u0026quot;key\u0026quot;: \u0026quot;value\u0026quot;\u003cbr\u003e}\u003c/p\u003e",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/.object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"activityId\":ActivityUi.Id(is as same as Activity's id)}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "activity"
+                ],
+                "description": "Use Json to input background,button,detailButton,successButton,description,detail,keyVisual,endNotice,notSuccess,successTop",
+                "operationId": "ActivityController.Create ActivityUi",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId you want to get",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "\u003cp\u003e{\u003cbr\u003e\u0026quot;key\u0026quot;: \u0026quot;value\u0026quot;,\u003cbr\u003e...\u003cbr\u003e\u003cbr\u003e\u0026quot;key\u0026quot;: \u0026quot;value\u0026quot;\u003cbr\u003e}\u003c/p\u003e",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/.object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"activityId\":ActivityUi.Id(is as same as Activity's id)}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/activity/{activityId}": {
+            "get": {
+                "tags": [
+                    "activity"
+                ],
+                "description": "Return general information including UI",
+                "operationId": "ActivityController.Get Activity",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId you want to get",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{Activity} activityUI,name,price,groupSize,limitCount,existCount,startDate,endDate,isEnd"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "activity"
+                ],
+                "description": "update the Activity",
+                "operationId": "ActivityController.Update Activity",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId you want to get",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "\u003cp\u003e{\u003cbr\u003e\u0026quot;price\u0026quot;: 0.0,\u003cbr\u003e\u0026quot;groupSize\u0026quot;: 0,\u003cbr\u003e\u0026quot;limitCount\u0026quot;: 0,\u003cbr\u003e\u0026quot;startDate\u0026quot;: \u0026quot;2017-01-01\u0026quot;,\u003cbr\u003e\u0026quot;endDate\u0026quot;: \u0026quot;2017-12-31\u0026quot;\u003cbr\u003e}\u003c/p\u003e",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/.object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"updated\": \"succeed\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "activity"
+                ],
+                "description": "Delete the Activity",
+                "operationId": "ActivityController.Delete Activity",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId you want to get",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"state\": \"succeed\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/record/": {
+            "post": {
+                "tags": [
+                    "record"
+                ],
+                "description": "Add one record",
+                "operationId": "RecordController.Add Record",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "\u003cp\u003e{\u003cbr\u003e\u0026quot;activityId\u0026quot;:1,\u003cbr\u003e\u0026quot;openId\u0026quot;: \u0026quot;xxxx\u0026quot;,\u003cbr\u003e\u0026quot;paidId\u0026quot;: \u0026quot;me\u0026quot;,\u003cbr\u003e\u0026quot;paidState\u0026quot;: \u0026quot;yyyy\u0026quot;,\u003cbr\u003e\u0026quot;paidAmount\u0026quot;: \u0026quot;yyyy\u0026quot;\u003cbr\u003e}\u003c/p\u003e",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/.object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"state\":\"success\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/ticket/generation/{activityId}/{ticketModel}/{count}/{password}": {
+            "post": {
+                "tags": [
+                    "ticket"
+                ],
+                "description": "Create Tickets",
+                "operationId": "TicketController.Create Tickets",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "activityId for those Tickets generated",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "ticketModel",
+                        "description": "ticketModel for those Tickets generated",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "count",
+                        "description": "How much tickets need to be generated",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "password",
+                        "description": "password",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\u003cbr\u003e\"count\":int,\"error\":null\u003cbr\u003e}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/ticket/model/": {
+            "post": {
+                "tags": [
+                    "ticket"
+                ],
+                "description": "create TicketModel",
+                "operationId": "TicketController.CreateOrUpdate TicketModel",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "{\u003cbr\u003e \u0026quot;type\u0026quot;: \u0026quot;Voucher/Discount/Droit\u0026quot;,\u003cbr\u003e \u0026quot;condition\u0026quot;: 100,\u003cbr\u003e \u0026quot;picture\u0026quot;: \u0026quot;\u0026quot;,\u003cbr\u003e \u0026quot;description\u0026quot;: \u0026quot;\u0026quot;,\u003cbr\u003e \u0026quot;startDate\u0026quot;: \u0026quot;2017/10/24\u0026quot;,\u003cbr\u003e \u0026quot;endDate\u0026quot;: \u0026quot;2017/10/30\u0026quot;,\u003cbr\u003e\u0026quot;value\u0026quot;: int\u003cbr\u003e  }",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/.object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{models.TicketModel}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/ticket/model/{ticketModelId}": {
+            "get": {
+                "tags": [
+                    "ticket"
+                ],
+                "description": "find TicketModel by id",
+                "operationId": "TicketController.Get TicketModel",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "ticketModelId",
+                        "description": "the ticketModelId you want to get",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{TicketModel} models.TicketModel"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/ticket/models/": {
+            "get": {
+                "tags": [
+                    "ticket"
+                ],
+                "description": "get all TicketModels",
+                "operationId": "TicketController.GetAll",
+                "responses": {
+                    "200": {
+                        "description": "{\u003cbr\u003e\"ticketModels\": [TicketModel1,TicketModel2,...],\u003cbr\u003e\"count\":2,\u003cbr\u003e\"error\":null\u003cbr\u003e}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/ticket/tickets/used/{activityId}": {
+            "get": {
+                "tags": [
+                    "ticket"
+                ],
+                "description": "get all Used ticket by activityId, if activityId = 0 then return all used ticket",
+                "operationId": "TicketController.GetUsedTickets",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId you want to get",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/ticket/{ticketCode}/": {
+            "get": {
+                "tags": [
+                    "ticket"
+                ],
+                "description": "Check Ticket",
+                "operationId": "TicketController.Check Ticket",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "ticketCode",
+                        "description": "Ticket.Code",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\u003cbr\u003e\"startDate\": \"2017/1/1\",\u003cbr\u003e\"endDate\": \"2017/1/1\",\u003cbr\u003e\"condition\": 100,\u003cbr\u003e\"value\": 50,\u003cbr\u003e\"type\": \"Voucher\",\u003cbr\u003e\"state\": \"Legal/Illegal/Used\",\u003cbr\u003e\"error\":null\u003cbr\u003e}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "ticket"
+                ],
+                "description": "Burn Ticket",
+                "operationId": "TicketController.Burn Ticket",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "ticketCode",
+                        "description": "Ticket.Code",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"state\":\"succeed\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/user/": {
+            "put": {
+                "tags": [
+                    "user"
+                ],
+                "description": "update the User",
+                "operationId": "UserController.Update User",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "\u003cp\u003e{\u003cbr\u003e\u0026quot;id\u0026quot;:1,\u003cbr\u003e\u0026quot;openId\u0026quot;: \u0026quot;xxxx\u0026quot;,\u003cbr\u003e\u0026quot;nickName\u0026quot;: \u0026quot;me\u0026quot;,\u003cbr\u003e\u0026quot;headImgUrl\u0026quot;: \u0026quot;yyyy.cn/1.png\u0026quot;,\u003cbr\u003e\u0026quot;paid\u0026quot;: false\u003cbr\u003e}\u003c/p\u003e",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/.object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"updated\": \"succeed\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "user"
+                ],
+                "description": "delete the User",
+                "operationId": "UserController.Delete User",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "\u003cp\u003e{\u003cbr\u003e\u0026quot;openId\u0026quot;: \u0026quot;xxxx\u0026quot;,\u003cbr\u003e\u0026quot;activityId\u0026quot;: 1\u003cbr\u003e}\u003c/p\u003e",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/.object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"state\": \"succeed\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/user/group_user/{groupId}/{openId}": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "Add User as NormalUser",
+                "operationId": "UserController.Add NormalUser",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "groupId",
+                        "description": "the groupId where the User belong",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "path",
+                        "name": "openId",
+                        "description": "The User's OpenId",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "json{\"groupId\",\"newGroupSize\",\"userId\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/user/starter/{activityId}/{openId}": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "Add User as Starter",
+                "operationId": "UserController.Add Starter",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId where the Starter belong",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "path",
+                        "name": "openId",
+                        "description": "The Starter's OpenId",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "json:{\"userId\", \"groupId\", \"newActivityExistCount\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/user/{activityId}/{key}": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "description": "Get User",
+                "operationId": "UserController.Get One User",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "Activity.Id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "description": "OpenId/Mobile",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "json{\"user\",\"tickets\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/user/{userId}/tickets": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "Add Ticket's Owner",
+                "operationId": "UserController.Add Ticket's Owner",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "ticklist",
+                        "description": "{\u003cbr\u003e\u0026quot;ticklist\u0026quot;:\u003cbr\u003e[1,2,3,4]\u003cbr\u003e}",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/.object"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "userId",
+                        "description": "user's Id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"state\":\"succeed\"}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/users/{activityId}/": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "description": "get all User",
+                "operationId": "UsersController.GetAll",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\u003cbr\u003e\"users\": [User1,User2,...],\u003cbr\u003e\"count\":2}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        },
+        "/users/{activityId}/group/{groupId}": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "description": "Get Group",
+                "operationId": "UsersController.Get Group",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "activityId",
+                        "description": "the activityId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "groupId",
+                        "description": "groupId",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\u003cbr\u003e\"group\": Group1,\u003cbr\u003e\"error\":null\u003cbr\u003e}"
+                    },
+                    "400": {
+                        "description": "\"Params Error infomation\""
+                    },
+                    "403": {
+                        "description": "\"Error infomation\""
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        ".object": {
+            "type": "object"
+        }
+    },
+    "tags": [
+        {
+            "name": "activity",
+            "description": "ActivityController Operations about Activity\n"
+        },
+        {
+            "name": "record",
+            "description": "RecordController about User\n"
+        },
+        {
+            "name": "activities",
+            "description": "ActivitiesController Operations about Activities\n"
+        },
+        {
+            "name": "ticket",
+            "description": "TicketController about Ticket\n"
+        },
+        {
+            "name": "user",
+            "description": "UserController about User\n"
+        },
+        {
+            "name": "users",
+            "description": "UsersController about Users\n"
+        }
+    ]
+}
